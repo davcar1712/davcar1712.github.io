@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script&family=Lora&display=swap" rel="stylesheet">
+  <title>Para María 💌</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Dancing Script', cursive;
+      background: linear-gradient(to top left, #ffe6e6, #ffc3c3);
+      overflow-x: hidden;
+      text-align: center;
+    }
+
+    .hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .heart {
+      position: absolute;
+      color: #ff6b81;
+      font-size: 2rem;
+      animation: float 6s infinite ease-in;
+      opacity: 0.6;
+    }
+
+    @keyframes float {
+  0% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(110vh) scale(1.2); opacity: 0; }
+}
+
+
+    h1 {
+      font-family: 'Dancing Script', cursive;
+      font-size: 4rem;
+      margin-top: 2rem;
+      color: #b03a2e;
+      z-index: 2;
+      position: relative;
+    }
+
+    .container {
+      perspective: 1500px;
+      margin: 4rem auto 2rem;
+      width: 1250px;
+      height: 800px;
+      z-index: 2;
+      position: relative;
+    }
+
+    .flip-card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 1s;
+    }
+
+    .flipped {
+      transform: rotateY(180deg);
+    }
+
+    .envelope, .pregunta {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .envelope {
+      position: relative;
+      background: #f5b7b1;
+      border: 2px solid #d98880;
+    }
+
+    .flap {
+      width: 100%;
+      height: 50%;
+      background: #ec7063;
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: top;
+      transition: transform 1s ease-in-out;
+      z-index: 2;
+    }
+
+    .seal {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #d32f2f;
+      color: white;
+      font-size: 1.5rem;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      border: 2px solid white;
+      z-index: 3;
+      transition: opacity 0.5s ease;
+    }
+
+    .open .flap {
+      transform: rotateX(-180deg);
+    }
+
+    .open .seal {
+      opacity: 0;
+    }
+
+    .letter {
+    width: 100%;
+    height: 100%;
+    background: #fffdf5;
+    border: 1px solid #f0e6d2;
+    border-radius: 10px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.6rem;
+    color: #3e2723;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    opacity: 0;
+    transition: opacity 1s ease;
+    overflow-y: auto;
+    overflow-x: hidden; /* 👈 ¡ESTO ES LA CLAVE! */
+    text-align: left;
+    padding: 2rem; /* 👈 Esto asegura que el texto no toque los bordes y no cree scroll */
+    box-sizing: border-box; /* 👈 Para que padding no aumente el tamaño */
+}
+
+
+    /* al abrir el sobre */
+    .open .letter {
+      opacity: 1;
+    }
+
+
+    .back-button {
+      margin-top: 1rem;
+      z-index: 2;
+      position: relative;
+      display: none;
+    }
+
+    .show-button {
+      display: inline-block;
+    }
+
+    .pregunta {
+      background: #fff0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #c0392b;
+      font-size: 2rem;
+      padding: 2rem;
+      transform: rotateY(180deg);
+    }
+
+    .botones {
+      margin-top: 1rem;
+      position: relative;
+      width: 250px;
+      height: 60px;
+    }
+
+    button {
+      font-size: 1.2rem;
+      padding: 0.7rem 1.6rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    #si {
+      background-color: #27ae60;
+      color: white;
+      margin-right: 1rem;
+    }
+
+    #no {
+      background-color: #e74c3c;
+      color: white;
+      position: fixed;
+      z-index: 1000;
+      transition: 0.3s ease;
+    }
+
+    @media (max-width: 600px) {
+      .container { width: 90%; height: 320px; }
+      .letter { font-size: 1.3rem; padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hearts" id="hearts"></div>
+
+  <h1>Para María 💌</h1>
+
+  <div class="container">
+    <div class="flip-card" id="flipCard">
+      <div class="envelope" id="envelope">
+        <div class="flap"></div>
+        <div class="seal">❤️</div>
+        <div class="letter">
+          <p>Querida María,</p>
+          <p>La verdad es que no se muy bien cómo empezar esta carta (ni ninguna otra realmente), pero bueno, por lo poco (o mucho) que te conozco creo que te hará ilusión.</p>
+          <p>Pero espera… antes que nada… Lea las instrucciones de este testamento y consulte al informático</p>
+          <ol>
+            <li>No vale llorar</li>
+            <li>He dicho que no vale llorar</li>
+            <li>Bueno va, como seguramente esto no sea posible debes saber que esta carta está disponible también en formato digital puedes continuar leyéndola en físico o acceder a la otra mediante este link:    y así no manchar la carta de lagrimas</li>
+            <li>Y por último, queda terminantemente prohibido enseñar esta carta a cualquier persona (Dame un beso para confirmar que estás de acuerdo con los términos y condiciones)</li>
+          </ol>
+          <p>Maria como te he dicho no se como empezar a escribir esta carta, pero me la voy a tomar como una charla con mi yo interior, no tengo ni idea de si será muy larga o muy corta pero espero de corazón que te guste.          </p>
+          <p>La realidad es que te conozco desde hace 2 semanas pero es que me encantas y ya está, eso no se puede ocultar. Podría pasarme la noche entera contigo metidos en el coche abrazados y seria la mejor noche posible y eso es únicamente porque estás tú, con tu sonrisa, con tu dulcísima voz, con tus besos y con esos ojos tan brillantes mirándome después de darte una flor o esta misma carta, me paro a pensarlo y la verdad es que me voy a hacer adicto a darte regalitos porque verte feliz es lo que más me gusta.
+          <p>El otro dia me preguntaste por mi música favorita, mientras escribo esta carta está sonando Coldplay, indudablemente mi grupo favorito, ¿te imaginas que un día estés acompañandome a uno de sus conciertos? Hay muchas canciones que me recuerdan a ti pero voy a intentar quedarme con unas pocas y contarte un poco de ellas aunque puedes saltar al siguiente párrafo si se te hace pesado leer todo.</p>
+          <ul>
+            <li>‘Fix you’ efectivamente iban a aparecer en la lista muchas canciones de Coldplay, pero te contaré por qué. Chris Martin (vocalista de Coldplay) escribió esta canción a principios de los 2000, cuando empezaba a salir con una chica que había perdido a su papá y no podía salir adelante, un día encontró un piano eléctrico que había comprado el papa de la chica y que nunca llegó a usar, lo enciende, lo toca y se enamora de su sonido y mágicamente aparece esta canción. Para que sepas que siempre podrás contar conmigo. “Lights will guide you home, And ignite your bones, And I will try to fix you”</li>
+            <li>‘Yellow’ Mitiquisima, esta canción no es que me recuerde a ti, simplemente parece que la escribieron pensando en ti “Look at the stars, look how they shine for you”</li>
+            <li>‘A sky full of stars’ (la última de Coldplay lo prometo) Esta es mi canción favorita, me parece perfecta en todos los sentidos. La música, la letra… es preciosa de principio a fin, exactamente como tu. Aquí no me quedo con ninguna parte de la letra porque como te digo es toda perfecta.</li>
+            <li>‘Feel’ Esta canción habla de cómo se siente la vida antes de haber sentido el amor, la verdad es que siempre me he sentido muy identificado con la letra pero ahora la veré diferente.</li>
+            <li>‘Chasing Cars’ No tengo nada más que añadir, ojala siempre quieras acostarte conmigo y olvidarnos del mundo. “If I lay here, If I just lay here, Would you lie with me and just forget the world?”</li>
+          </ul>
+          <p>Y hay muchas más pero bueno podemos dejarlo para otras cartas si te ha gustado esta &#128536;</p>
+          <p>Bueno, creo que ya va siendo hora de despedir la carta, como siempre te digo gracias por ser como eres y sobretodo por valorarme tanto &#128149; </p>
+          <p>Aunque espera … Esta es la tercera cita ¿no? Por mi parte la respuesta siempre será un SI, pero tómate el tiempo que necesites para responder. </p>
+          <p>Te quiero,<br>David</p>
+        </div>
+      </div>
+      <div class="pregunta">
+        <div>¿Quieres ser mi novia? 💞</div>
+        <div class="botones">
+          <button id="si">Sí 💘</button>
+          <button id="no">No 😜</button>
+        </div>
+      </div>
+    </div>
+    <div class="back-button" id="backBtn">
+      <button onclick="girar()">Girar 🔁</button>
+    </div>
+  </div>
+
+  <script>
+    const envelope = document.getElementById('envelope');
+    const flipCard = document.getElementById('flipCard');
+    const noBtn = document.getElementById('no');
+    const backBtn = document.getElementById('backBtn');
+
+    envelope.addEventListener('click', () => {
+      envelope.classList.add('open');
+      backBtn.classList.add('show-button');
+    });
+
+    function girar() {
+      flipCard.classList.toggle('flipped');
+    }
+
+    // Botón "No" restringido a moverse dentro del contenedor
+    noBtn.addEventListener('mouseover', () => {
+      moveButton();
+    });
+
+    function moveButton() {
+      const btnWidth = noBtn.offsetWidth;
+      const btnHeight = noBtn.offsetHeight;
+      const container = document.querySelector('.pregunta'); // Usar el contenedor de la pregunta
+      const containerRect = container.getBoundingClientRect();
+
+      // Calculamos el área de movimiento permitida dentro del contenedor
+      const maxX = containerRect.width - btnWidth - 10; // 10px de margen
+      const maxY = containerRect.height - btnHeight - 10; // 10px de margen
+
+      // Generamos una posición aleatoria dentro de esos límites
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      noBtn.style.left = `${x}px`;
+      noBtn.style.top = `${y}px`;
+    }
+
+    document.getElementById("si").addEventListener("click", () => {
+      alert("¡Siii! 💖 Pues dale un beso cara queso✨");
+    });
+
+    // Corazones flotantes
+    const heartsContainer = document.getElementById('hearts');
+
+    function createHeart() {
+  const heart = document.createElement('div');
+  heart.className = 'heart';
+
+  // Emojis a alternar
+  const emojis = ['💖', '🌹', '💞'];
+  const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
+
+  heart.textContent = randomEmoji;
+  heart.style.left = Math.random() * 100 + 'vw';
+  heart.style.fontSize = Math.random() * 20 + 15 + 'px';
+  heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+  heartsContainer.appendChild(heart);
+  setTimeout(() => heart.remove(), 6000);
+}
+
+
+    setInterval(createHeart, 200);
+  </script>
+
+</body>
+</html>
